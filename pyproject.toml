@@ -1,0 +1,37 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "marv-gs"
+version = "0.1.0"
+description = "Cross-platform FastAPI + PySerial + WebSocket app with simple frontend and PyQt6 UI"
+readme = "README.md"
+requires-python = ">=3.9"
+authors = [
+  { name = "Luis" }
+]
+dependencies = [
+  "fastapi>=0.115.0",
+  "uvicorn[standard]>=0.30.0",
+  "pyserial>=3.5",
+  "PyQt6>=6.7.0",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.2.0",
+]
+
+[tool.uv]
+# Use src layout and uv for dependency management / venv
+package = true
+
+[tool.hatch.build.targets.wheel]
+packages = ["src"]
+
+[dependency-groups]
+dev = [
+    "httpx>=0.28.1",
+    "pytest>=8.4.2",
+]
