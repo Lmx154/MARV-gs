@@ -19,7 +19,7 @@ We will proceed incrementally and only move to the next phase after verifying th
 	- WebSocket `/ws` streaming at 20Hz
 	- Integrate `SerialManager`
 
-- [ ] Checkpoint 4: Frontend Integration
+- [x] Checkpoint 4: Frontend Integration
 	- Basic HTML/JS with buttons and live data via WebSocket
 	- Serve statically via FastAPI
 
