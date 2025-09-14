@@ -16,6 +16,7 @@ from pydantic import BaseModel, Field
 from starlette.staticfiles import StaticFiles
 
 from .serial_manager import SerialManager, SerialState
+from contextlib import asynccontextmanager
 
 
 logger = logging.getLogger(__name__)
@@ -67,7 +68,16 @@ def _frontend_dir() -> str:
 
 
 def create_app(*, serial_factory: Optional[Callable[..., object]] = None) -> FastAPI:
-    app = FastAPI(title="MARV-gs Backend", version="0.1.0")
+    @asynccontextmanager
+    async def lifespan(app: FastAPI):
+        import asyncio
+        app.state.loop = asyncio.get_running_loop()
+        try:
+            yield
+        finally:
+            app.state.loop = None
+
+    app = FastAPI(title="MARV-gs Backend", version="0.1.0", lifespan=lifespan)
 
     # CORS optional (local dev convenience)
     app.add_middleware(
@@ -146,16 +156,6 @@ def create_app(*, serial_factory: Optional[Callable[..., object]] = None) -> Fas
     # Expose objects for testing
     app.state.serial_mgr = serial_mgr
     app.state.ws_manager = ws_manager
-
-    @app.on_event("startup")
-    async def _startup() -> None:  # noqa: D401
-        """Capture event loop for cross-thread scheduling."""
-        import asyncio
-        app.state.loop = asyncio.get_running_loop()
-
-    @app.on_event("shutdown")
-    async def _shutdown() -> None:
-        app.state.loop = None
     return app
 
 # default ASGI app
