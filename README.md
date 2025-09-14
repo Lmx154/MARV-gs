@@ -53,9 +53,18 @@ Where to find the EXE
 Notes
 - API details are in `API.md`.
 
-## Run tests
+## Tests and coverage
+
+- Run tests (quiet):
 ```powershell
 uv run pytest -q
 ```
+
+- Run tests with coverage summary (for `src/`):
+```powershell
+uv run pytest -q --cov=src --cov-report=term-missing
+```
+
+Tips
 - Use `-k name` to run specific tests.
 
