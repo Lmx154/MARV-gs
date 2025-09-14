@@ -23,7 +23,7 @@ We will proceed incrementally and only move to the next phase after verifying th
 	- Basic HTML/JS with buttons and live data via WebSocket
 	- Serve statically via FastAPI
 
-- [ ] Checkpoint 5: Backend Desktop UI
+- [x] Checkpoint 5: Backend Desktop UI
 	- PyQt6 GUI to start/stop server and show logs
 
 - [ ] Checkpoint 6: Full Integration and Polish

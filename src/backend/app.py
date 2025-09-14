@@ -5,6 +5,7 @@ import logging
 import os
 import time
 from pathlib import Path
+import sys
 from typing import Callable, Optional
 
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect, HTTPException
@@ -53,7 +54,13 @@ class ConnectionManager:
 
 
 def _frontend_dir() -> str:
-    # Serve `src/frontend` relative to this file
+    """Resolve the frontend directory in dev and frozen (PyInstaller) builds.
+
+    In frozen builds, PyInstaller extracts files under sys._MEIPASS.
+    """
+    base = getattr(sys, "_MEIPASS", None)
+    if base:
+        return str(Path(base) / "src" / "frontend")
     here = Path(__file__).resolve()
     root = here.parents[2]
     return str(root / "src" / "frontend")
