@@ -14,7 +14,8 @@
 <body>
   <h1>MARV-gs Frontend (Checkpoint 4 placeholder)</h1>
   <div class="controls">
-    <input id="port" placeholder="COM3 or /dev/ttyUSB0" />
+    <select id="portSelect"></select>
+    <button id="refreshBtn">Refresh</button>
     <input id="baud" type="number" placeholder="115200" />
     <button id="openBtn">Open</button>
     <button id="closeBtn">Close</button>
@@ -26,7 +27,152 @@
   <script>
     // Placeholder; real wiring in later checkpoints
     const log = (m) => { const el = document.getElementById('log'); el.textContent += m + '\n'; el.scrollTop = el.scrollHeight; };
-    log('Frontend scaffold ready.');
+
+    async function loadDevices() {
+      try {
+        const res = await fetch('/serial/devices');
+        if (!res.ok) throw new Error('Failed to load devices');
+        const data = await res.json();
+        const sel = document.getElementById('portSelect');
+        sel.innerHTML = '';
+        const devices = (data && data.devices) || [];
+        if (devices.length === 0) {
+          const opt = document.createElement('option');
+          opt.value = '';
+          opt.textContent = 'No devices found';
+          sel.appendChild(opt);
+          sel.disabled = true;
+        } else {
+          sel.disabled = false;
+          for (const d of devices) {
+            const opt = document.createElement('option');
+            opt.value = d.port;
+            opt.textContent = `${d.port} - ${d.description || d.hwid || ''}`.trim();
+            sel.appendChild(opt);
+          }
+        }
+      } catch (e) {
+        log('Error loading devices: ' + e);
+      }
+    }
+
+    document.getElementById('refreshBtn').addEventListener('click', loadDevices);
+    window.addEventListener('load', loadDevices);
+
+    // WebSocket wiring for live data and status
+    let ws;
+    let wsReconnectDelay = 1000;
+
+    function updateButtons(state) {
+      const openBtn = document.getElementById('openBtn');
+      const closeBtn = document.getElementById('closeBtn');
+      const isOpen = state === 'open';
+      openBtn.disabled = isOpen;
+      closeBtn.disabled = !isOpen;
+    }
+
+    function connectWs() {
+      const proto = location.protocol === 'https:' ? 'wss' : 'ws';
+      const url = `${proto}://${location.host}/ws`;
+      try {
+        ws = new WebSocket(url);
+      } catch (e) {
+        log('WS connect error: ' + e);
+        setTimeout(connectWs, wsReconnectDelay);
+        return;
+      }
+
+      ws.onopen = () => {
+        log('WS connected');
+        wsReconnectDelay = 1000; // reset backoff
+      };
+      ws.onmessage = (ev) => {
+        try {
+          const msg = JSON.parse(ev.data);
+          if (msg.type === 'status') {
+            document.getElementById('status').textContent = `Status: ${msg.state}`;
+            updateButtons(msg.state);
+          } else if (msg.type === 'data') {
+            if (typeof msg.line === 'string') {
+              log(msg.line.replace(/\n$/, ''));
+            }
+          }
+        } catch (e) {
+          // ignore non-JSON messages
+        }
+      };
+      ws.onerror = () => {
+        log('WS error');
+      };
+      ws.onclose = () => {
+        log('WS disconnected');
+        // exponential-ish backoff up to 10s
+        wsReconnectDelay = Math.min(wsReconnectDelay * 1.5, 10000);
+        setTimeout(connectWs, wsReconnectDelay);
+      };
+    }
+
+    // Use dropdown value when opening the port
+    document.getElementById('openBtn').addEventListener('click', async () => {
+      const sel = document.getElementById('portSelect');
+      const baudEl = document.getElementById('baud');
+      const port = sel && !sel.disabled ? sel.value : '';
+      const baud = parseInt((baudEl.value || '115200'), 10);
+      if (!port) {
+        log('Select a serial device first.');
+        return;
+      }
+      try {
+        const res = await fetch('/open', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ port, baud })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || 'Open failed');
+        document.getElementById('status').textContent = `Status: ${data.state}`;
+        updateButtons(data.state);
+        log(`Opened ${port} @ ${baud}`);
+      } catch (e) {
+        log('Error opening port: ' + e);
+      }
+    });
+
+    document.getElementById('closeBtn').addEventListener('click', async () => {
+      try {
+        const res = await fetch('/close', { method: 'POST' });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || 'Close failed');
+        document.getElementById('status').textContent = `Status: ${data.state}`;
+        updateButtons(data.state);
+        log('Closed port');
+      } catch (e) {
+        log('Error closing port: ' + e);
+      }
+    });
+
+    document.getElementById('writeBtn').addEventListener('click', async () => {
+      const cmd = document.getElementById('cmd').value.trim();
+      if (!cmd) {
+        log('Enter a command to write.');
+        return;
+      }
+      try {
+        const res = await fetch('/write', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ cmd })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || 'Write failed');
+        log(`Wrote ${data.written} bytes: ${cmd}`);
+      } catch (e) {
+        log('Error writing: ' + e);
+      }
+    });
+
+    window.addEventListener('load', connectWs);
+    log('Frontend scaffold ready. Click Refresh to list devices.');
   </script>
 </body>
 </html>

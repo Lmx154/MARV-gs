@@ -15,7 +15,7 @@ from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
 from starlette.staticfiles import StaticFiles
 
-from .serial_manager import SerialManager, SerialState
+from .serial_manager import SerialManager, SerialState, list_serial_devices
 from contextlib import asynccontextmanager
 
 
@@ -123,6 +123,14 @@ def create_app(*, serial_factory: Optional[Callable[..., object]] = None) -> Fas
         serial_mgr.close_port()
         await ws_manager.broadcast_json({"type": "status", "state": serial_mgr.state.name.lower()})
         return {"state": serial_mgr.state.name.lower()}
+
+    @app.get("/serial/devices")
+    async def get_serial_devices():
+        try:
+            devices = list_serial_devices()
+        except Exception as e:  # noqa: BLE001
+            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+        return {"devices": devices}
 
     @app.post("/write")
     async def write(req: WriteRequest):

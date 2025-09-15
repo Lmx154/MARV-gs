@@ -80,3 +80,25 @@ def test_write_rejected_when_closed():
     with TestClient(app) as client:
         w = client.post("/write", json={"cmd": "X"})
         assert w.status_code == 409
+
+
+def test_get_serial_devices_endpoint(monkeypatch):
+    from src.backend import app as app_module
+
+    def fake_list():
+        return [
+            {"port": "COM7", "description": "Test Device", "hwid": "USB VID:PID=0000:0000"},
+            {"port": "COM8", "description": "Another", "hwid": "USB VID:PID=0000:0001"},
+        ]
+
+    # Patch the reference used inside the app module
+    monkeypatch.setattr(app_module, "list_serial_devices", fake_list)
+
+    app = create_app(serial_factory=serial_factory)
+    with TestClient(app) as client:
+        r = client.get("/serial/devices")
+        assert r.status_code == 200
+        data = r.json()
+        assert "devices" in data
+        ports = {d["port"] for d in data["devices"]}
+        assert ports == {"COM7", "COM8"}

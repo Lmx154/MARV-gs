@@ -4,7 +4,7 @@ from typing import List
 
 import pytest
 
-from src.backend.serial_manager import SerialManager, SerialState, SerialStateError
+from src.backend.serial_manager import SerialManager, SerialState, SerialStateError, list_serial_devices
 
 
 class FakeSerial:
@@ -79,3 +79,26 @@ def test_listener_receives_reads():
     mgr.close_port()
     assert any("hello" in s for s in received)
     assert any("world" in s for s in received)
+
+
+def test_list_serial_devices_monkeypatch(monkeypatch):
+    class Port:
+        def __init__(self, device, description, hwid):
+            self.device = device
+            self.description = description
+            self.hwid = hwid
+
+    # Patch the helper used by list_serial_devices
+    from src.backend import serial_manager as sm
+
+    monkeypatch.setattr(
+        sm,
+        "_iter_comports",
+        lambda: [
+            Port("COM3", "USB-Serial", "USB VID:PID=1A86:7523"),
+            Port("COM4", "Arduino", "USB VID:PID=2341:0043"),
+        ],
+    )
+
+    devices = list_serial_devices()
+    assert {d["port"] for d in devices} == {"COM3", "COM4"}

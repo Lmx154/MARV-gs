@@ -52,6 +52,48 @@ class SerialConfig:
     timeout: float = 0.05  # seconds; aligns with 20Hz reading
 
 
+def _iter_comports():
+    """Internal helper to iterate available serial ports.
+
+    Separated for easy monkeypatching in tests. Returns an iterable of objects
+    that have at least attributes: device, description, and hwid.
+    """
+    try:  # Deferred import to avoid hard dependency during static analysis/tests
+        from serial.tools import list_ports  # type: ignore
+    except Exception:  # pragma: no cover - environment without pyserial
+        return []
+    try:
+        return list_ports.comports()  # type: ignore[no-any-return]
+    except Exception:  # pragma: no cover - unexpected runtime error
+        return []
+
+
+def list_serial_devices() -> List[dict]:
+    """Enumerate connected serial devices.
+
+    Returns a list of dicts with keys: 'port', 'description', 'hwid'.
+    Safe to call even when pyserial is not installed; returns an empty list.
+    """
+    devices: List[dict] = []
+    for p in _iter_comports() or []:
+        try:
+            port = getattr(p, "device", None) or getattr(p, "name", None) or ""
+            desc = getattr(p, "description", "")
+            hwid = getattr(p, "hwid", "")
+            if port:
+                devices.append({
+                    "port": str(port),
+                    "description": str(desc),
+                    "hwid": str(hwid),
+                })
+        except Exception:
+            # Skip malformed entries
+            continue
+    # Sort by port name for stable UI ordering
+    devices.sort(key=lambda d: d.get("port", ""))
+    return devices
+
+
 class SerialManager:
     """
     Thread-safe serial connection manager with a finite state machine (FSM).
