@@ -147,11 +147,23 @@ def create_app(*, serial_factory: Optional[Callable[..., object]] = None) -> Fas
         finally:
             ws_manager.disconnect(websocket)
 
+    @app.get("/healthz")
+    async def healthz():
+        # Basic readiness endpoint
+        return JSONResponse({"ok": True})
+
     # Static frontend
     frontend_dir = _frontend_dir()
     if os.path.isdir(frontend_dir):
-        # Mount last so that API routes take precedence
+        # Serve top-level landing (existing index.html)
         app.mount("/", StaticFiles(directory=frontend_dir, html=True), name="static")
+        # Explicit subpaths for clarity
+        test_ui_dir = os.path.join(frontend_dir, "test-ui")
+        gui_dir = os.path.join(frontend_dir, "gui")
+        if os.path.isdir(test_ui_dir):
+            app.mount("/test-ui", StaticFiles(directory=test_ui_dir, html=True), name="test-ui")
+        if os.path.isdir(gui_dir):
+            app.mount("/gui", StaticFiles(directory=gui_dir, html=True), name="gui")
 
     # Expose objects for testing
     app.state.serial_mgr = serial_mgr

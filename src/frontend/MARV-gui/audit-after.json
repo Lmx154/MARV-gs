@@ -1,0 +1,507 @@
+{
+  "auditReportVersion": 2,
+  "vulnerabilities": {
+    "@babel/core": {
+      "name": "@babel/core",
+      "severity": "critical",
+      "isDirect": false,
+      "via": [
+        "@babel/helper-module-transforms",
+        "@babel/traverse",
+        "debug"
+      ],
+      "effects": [
+        "@babel/helper-module-transforms",
+        "@babel/plugin-transform-react-jsx-self",
+        "@babel/plugin-transform-react-jsx-source",
+        "@vitejs/plugin-react"
+      ],
+      "range": "*",
+      "nodes": [
+        "node_modules/@babel/core"
+      ],
+      "fixAvailable": false
+    },
+    "@babel/helper-module-imports": {
+      "name": "@babel/helper-module-imports",
+      "severity": "critical",
+      "isDirect": false,
+      "via": [
+        "@babel/traverse"
+      ],
+      "effects": [
+        "@babel/helper-module-transforms"
+      ],
+      "range": ">=7.24.7",
+      "nodes": [
+        "node_modules/@babel/helper-module-imports"
+      ],
+      "fixAvailable": false
+    },
+    "@babel/helper-module-transforms": {
+      "name": "@babel/helper-module-transforms",
+      "severity": "critical",
+      "isDirect": false,
+      "via": [
+        "@babel/core",
+        "@babel/helper-module-imports",
+        "@babel/traverse"
+      ],
+      "effects": [
+        "@babel/core"
+      ],
+      "range": ">=7.12.0",
+      "nodes": [
+        "node_modules/@babel/helper-module-transforms"
+      ],
+      "fixAvailable": false
+    },
+    "@babel/plugin-transform-react-jsx-self": {
+      "name": "@babel/plugin-transform-react-jsx-self",
+      "severity": "critical",
+      "isDirect": false,
+      "via": [
+        "@babel/core"
+      ],
+      "effects": [],
+      "range": "*",
+      "nodes": [
+        "node_modules/@babel/plugin-transform-react-jsx-self"
+      ],
+      "fixAvailable": true
+    },
+    "@babel/plugin-transform-react-jsx-source": {
+      "name": "@babel/plugin-transform-react-jsx-source",
+      "severity": "critical",
+      "isDirect": false,
+      "via": [
+        "@babel/core"
+      ],
+      "effects": [],
+      "range": "*",
+      "nodes": [
+        "node_modules/@babel/plugin-transform-react-jsx-source"
+      ],
+      "fixAvailable": true
+    },
+    "@babel/traverse": {
+      "name": "@babel/traverse",
+      "severity": "critical",
+      "isDirect": false,
+      "via": [
+        "debug"
+      ],
+      "effects": [
+        "@babel/helper-module-imports",
+        "@babel/helper-module-transforms"
+      ],
+      "range": "*",
+      "nodes": [
+        "node_modules/@babel/traverse"
+      ],
+      "fixAvailable": false
+    },
+    "@eslint-community/eslint-utils": {
+      "name": "@eslint-community/eslint-utils",
+      "severity": "critical",
+      "isDirect": false,
+      "via": [
+        "eslint"
+      ],
+      "effects": [
+        "@typescript-eslint/utils",
+        "eslint"
+      ],
+      "range": "*",
+      "nodes": [
+        "node_modules/@eslint-community/eslint-utils"
+      ],
+      "fixAvailable": false
+    },
+    "@eslint/config-array": {
+      "name": "@eslint/config-array",
+      "severity": "critical",
+      "isDirect": false,
+      "via": [
+        "debug"
+      ],
+      "effects": [
+        "eslint"
+      ],
+      "range": "*",
+      "nodes": [
+        "node_modules/@eslint/config-array"
+      ],
+      "fixAvailable": false
+    },
+    "@eslint/eslintrc": {
+      "name": "@eslint/eslintrc",
+      "severity": "critical",
+      "isDirect": false,
+      "via": [
+        "debug"
+      ],
+      "effects": [
+        "eslint"
+      ],
+      "range": "*",
+      "nodes": [
+        "node_modules/@eslint/eslintrc"
+      ],
+      "fixAvailable": false
+    },
+    "@typescript-eslint/eslint-plugin": {
+      "name": "@typescript-eslint/eslint-plugin",
+      "severity": "critical",
+      "isDirect": false,
+      "via": [
+        "@typescript-eslint/parser",
+        "@typescript-eslint/type-utils",
+        "@typescript-eslint/utils",
+        "eslint"
+      ],
+      "effects": [],
+      "range": "*",
+      "nodes": [
+        "node_modules/typescript-eslint/node_modules/@typescript-eslint/eslint-plugin"
+      ],
+      "fixAvailable": true
+    },
+    "@typescript-eslint/parser": {
+      "name": "@typescript-eslint/parser",
+      "severity": "critical",
+      "isDirect": false,
+      "via": [
+        "@typescript-eslint/typescript-estree",
+        "debug",
+        "eslint"
+      ],
+      "effects": [
+        "@typescript-eslint/eslint-plugin",
+        "typescript-eslint"
+      ],
+      "range": "*",
+      "nodes": [
+        "node_modules/typescript-eslint/node_modules/@typescript-eslint/parser"
+      ],
+      "fixAvailable": false
+    },
+    "@typescript-eslint/project-service": {
+      "name": "@typescript-eslint/project-service",
+      "severity": "critical",
+      "isDirect": false,
+      "via": [
+        "debug"
+      ],
+      "effects": [
+        "@typescript-eslint/typescript-estree"
+      ],
+      "range": "*",
+      "nodes": [
+        "node_modules/typescript-eslint/node_modules/@typescript-eslint/eslint-plugin/node_modules/@typescript-eslint/type-utils/node_modules/@typescript-eslint/typescript-estree/node_modules/@typescript-eslint/project-service",
+        "node_modules/typescript-eslint/node_modules/@typescript-eslint/parser/node_modules/@typescript-eslint/typescript-estree/node_modules/@typescript-eslint/project-service",
+        "node_modules/typescript-eslint/node_modules/@typescript-eslint/utils/node_modules/@typescript-eslint/typescript-estree/node_modules/@typescript-eslint/project-service"
+      ],
+      "fixAvailable": false
+    },
+    "@typescript-eslint/type-utils": {
+      "name": "@typescript-eslint/type-utils",
+      "severity": "critical",
+      "isDirect": false,
+      "via": [
+        "@typescript-eslint/typescript-estree",
+        "@typescript-eslint/utils",
+        "debug",
+        "eslint"
+      ],
+      "effects": [
+        "@typescript-eslint/eslint-plugin"
+      ],
+      "range": "*",
+      "nodes": [
+        "node_modules/typescript-eslint/node_modules/@typescript-eslint/eslint-plugin/node_modules/@typescript-eslint/type-utils"
+      ],
+      "fixAvailable": true
+    },
+    "@typescript-eslint/typescript-estree": {
+      "name": "@typescript-eslint/typescript-estree",
+      "severity": "critical",
+      "isDirect": false,
+      "via": [
+        "@typescript-eslint/project-service",
+        "debug"
+      ],
+      "effects": [
+        "@typescript-eslint/parser",
+        "@typescript-eslint/type-utils"
+      ],
+      "range": ">=2.4.1-alpha.0",
+      "nodes": [
+        "node_modules/typescript-eslint/node_modules/@typescript-eslint/eslint-plugin/node_modules/@typescript-eslint/type-utils/node_modules/@typescript-eslint/typescript-estree",
+        "node_modules/typescript-eslint/node_modules/@typescript-eslint/parser/node_modules/@typescript-eslint/typescript-estree",
+        "node_modules/typescript-eslint/node_modules/@typescript-eslint/utils/node_modules/@typescript-eslint/typescript-estree"
+      ],
+      "fixAvailable": false
+    },
+    "@typescript-eslint/utils": {
+      "name": "@typescript-eslint/utils",
+      "severity": "critical",
+      "isDirect": false,
+      "via": [
+        "@eslint-community/eslint-utils",
+        "@typescript-eslint/typescript-estree",
+        "eslint"
+      ],
+      "effects": [
+        "@typescript-eslint/eslint-plugin",
+        "@typescript-eslint/type-utils",
+        "typescript-eslint"
+      ],
+      "range": "*",
+      "nodes": [
+        "node_modules/typescript-eslint/node_modules/@typescript-eslint/utils"
+      ],
+      "fixAvailable": false
+    },
+    "@vitejs/plugin-react": {
+      "name": "@vitejs/plugin-react",
+      "severity": "critical",
+      "isDirect": true,
+      "via": [
+        "@babel/core",
+        "@babel/plugin-transform-react-jsx-self",
+        "@babel/plugin-transform-react-jsx-source"
+      ],
+      "effects": [],
+      "range": "*",
+      "nodes": [
+        "node_modules/@vitejs/plugin-react"
+      ],
+      "fixAvailable": false
+    },
+    "ansi-styles": {
+      "name": "ansi-styles",
+      "severity": "critical",
+      "isDirect": false,
+      "via": [
+        "color-convert"
+      ],
+      "effects": [
+        "chalk"
+      ],
+      "range": "3.0.0 - 4.3.0",
+      "nodes": [
+        "node_modules/ansi-styles"
+      ],
+      "fixAvailable": false
+    },
+    "chalk": {
+      "name": "chalk",
+      "severity": "critical",
+      "isDirect": false,
+      "via": [
+        "ansi-styles"
+      ],
+      "effects": [
+        "eslint"
+      ],
+      "range": "2.0.0 - 4.1.2",
+      "nodes": [
+        "node_modules/chalk"
+      ],
+      "fixAvailable": false
+    },
+    "color-convert": {
+      "name": "color-convert",
+      "severity": "critical",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1107275,
+          "name": "color-convert",
+          "dependency": "color-convert",
+          "title": "Malware in color-convert",
+          "url": "https://github.com/advisories/GHSA-ch7m-m9rf-8gvv",
+          "severity": "critical",
+          "cwe": [
+            "CWE-506"
+          ],
+          "cvss": {
+            "score": 0,
+            "vectorString": null
+          },
+          "range": ">=0"
+        },
+        "color-name"
+      ],
+      "effects": [
+        "ansi-styles"
+      ],
+      "range": "*",
+      "nodes": [
+        "node_modules/color-convert"
+      ],
+      "fixAvailable": false
+    },
+    "color-name": {
+      "name": "color-name",
+      "severity": "critical",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1107280,
+          "name": "color-name",
+          "dependency": "color-name",
+          "title": "Malware in color-name",
+          "url": "https://github.com/advisories/GHSA-m99c-cfww-cxqx",
+          "severity": "critical",
+          "cwe": [
+            "CWE-506"
+          ],
+          "cvss": {
+            "score": 0,
+            "vectorString": null
+          },
+          "range": ">=0"
+        }
+      ],
+      "effects": [
+        "color-convert"
+      ],
+      "range": "*",
+      "nodes": [
+        "node_modules/color-name"
+      ],
+      "fixAvailable": false
+    },
+    "debug": {
+      "name": "debug",
+      "severity": "critical",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1107274,
+          "name": "debug",
+          "dependency": "debug",
+          "title": "Malware in debug",
+          "url": "https://github.com/advisories/GHSA-8mgj-vmr8-frr6",
+          "severity": "critical",
+          "cwe": [
+            "CWE-506"
+          ],
+          "cvss": {
+            "score": 0,
+            "vectorString": null
+          },
+          "range": ">=0"
+        }
+      ],
+      "effects": [
+        "@babel/core",
+        "@babel/traverse",
+        "@eslint/config-array",
+        "@eslint/eslintrc",
+        "@typescript-eslint/parser",
+        "@typescript-eslint/project-service",
+        "@typescript-eslint/type-utils",
+        "@typescript-eslint/typescript-estree",
+        "eslint"
+      ],
+      "range": "*",
+      "nodes": [
+        "node_modules/debug"
+      ],
+      "fixAvailable": false
+    },
+    "eslint": {
+      "name": "eslint",
+      "severity": "critical",
+      "isDirect": true,
+      "via": [
+        "@eslint-community/eslint-utils",
+        "@eslint/config-array",
+        "@eslint/eslintrc",
+        "chalk",
+        "debug"
+      ],
+      "effects": [
+        "@eslint-community/eslint-utils",
+        "@typescript-eslint/eslint-plugin",
+        "@typescript-eslint/parser",
+        "@typescript-eslint/type-utils",
+        "@typescript-eslint/utils",
+        "eslint-plugin-react-hooks",
+        "eslint-plugin-react-refresh",
+        "typescript-eslint"
+      ],
+      "range": ">=0.7.1",
+      "nodes": [
+        "node_modules/eslint"
+      ],
+      "fixAvailable": false
+    },
+    "eslint-plugin-react-hooks": {
+      "name": "eslint-plugin-react-hooks",
+      "severity": "critical",
+      "isDirect": true,
+      "via": [
+        "eslint"
+      ],
+      "effects": [],
+      "range": "*",
+      "nodes": [
+        "node_modules/eslint-plugin-react-hooks"
+      ],
+      "fixAvailable": false
+    },
+    "eslint-plugin-react-refresh": {
+      "name": "eslint-plugin-react-refresh",
+      "severity": "critical",
+      "isDirect": true,
+      "via": [
+        "eslint"
+      ],
+      "effects": [],
+      "range": "*",
+      "nodes": [
+        "node_modules/eslint-plugin-react-refresh"
+      ],
+      "fixAvailable": false
+    },
+    "typescript-eslint": {
+      "name": "typescript-eslint",
+      "severity": "critical",
+      "isDirect": true,
+      "via": [
+        "@typescript-eslint/eslint-plugin",
+        "@typescript-eslint/parser",
+        "@typescript-eslint/utils",
+        "eslint"
+      ],
+      "effects": [],
+      "range": "*",
+      "nodes": [
+        "node_modules/typescript-eslint"
+      ],
+      "fixAvailable": false
+    }
+  },
+  "metadata": {
+    "vulnerabilities": {
+      "info": 0,
+      "low": 0,
+      "moderate": 0,
+      "high": 0,
+      "critical": 25,
+      "total": 25
+    },
+    "dependencies": {
+      "prod": 132,
+      "dev": 237,
+      "optional": 48,
+      "peer": 1,
+      "peerOptional": 0,
+      "total": 369
+    }
+  }
+}

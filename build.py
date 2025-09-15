@@ -19,6 +19,7 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parent
 SRC_DIR = REPO_ROOT / "src"
 FRONTEND_DIR = SRC_DIR / "frontend"
+MARV_GUI_DIR = FRONTEND_DIR / "MARV-gui"
 ENTRYPOINT = SRC_DIR / "ui" / "server_ui.py"
 DIST_DIR = REPO_ROOT / "dist"
 BUILD_DIR = REPO_ROOT / "build"
@@ -39,6 +40,7 @@ def pyinstaller_args(onefile: bool) -> list[str]:
         "pyinstaller",
         "--noconfirm",
         "--noconsole",
+    "--noupx",  # avoid UPX to reduce startup overhead
         "--name", "MARV-gs",
         "--add-data", add_data,
         "-p", str(SRC_DIR),
@@ -47,6 +49,31 @@ def pyinstaller_args(onefile: bool) -> list[str]:
     if onefile:
         base_args.insert(1, "--onefile")
     return base_args
+
+
+def build_marv_gui() -> None:
+    """Build the Vite React GUI into src/frontend/gui for packaging.
+
+    If Node/npm aren't available, skip with a warning. Developers can run
+    the GUI separately via `npm run dev`.
+    """
+    npm = shutil.which("npm")
+    if npm is None:
+        print("npm not found; skipping MARV-gui build. GUI will not be packaged.")
+        return
+    if not MARV_GUI_DIR.exists():
+        print(f"MARV-gui directory not found at {MARV_GUI_DIR}; skipping GUI build.")
+        return
+    print("Building MARV-gui with Vite...")
+    env = os.environ.copy()
+    # Ensure deterministic installs when possible
+    try:
+        subprocess.check_call([npm, "install", "--no-audit", "--no-fund"], cwd=str(MARV_GUI_DIR), env=env)
+        subprocess.check_call([npm, "run", "build"], cwd=str(MARV_GUI_DIR), env=env)
+    except subprocess.CalledProcessError as e:
+        print("MARV-gui build failed:", e)
+        # Do not fail the entire build; continue without GUI
+        return
 
 
 def run() -> int:
@@ -62,6 +89,9 @@ def run() -> int:
         onefile = True
 
     ensure_tools()
+
+    # Build GUI assets before packaging so they are included under src/frontend/gui
+    build_marv_gui()
 
     # Clean previous outputs
     for p in (DIST_DIR, BUILD_DIR, SPEC_DIR):

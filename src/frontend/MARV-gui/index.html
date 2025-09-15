@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='0.9em' font-size='90'>🚀</text></svg>" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Real-time rocket telemetry dashboard for monitoring flight data" />
+    <meta name="theme-color" content="#3B82F6" />
+    <title>Rocket Telemetry Dashboard</title>
+    
+  <!-- PWA manifest (relative for packaged serving) -->
+  <link rel="manifest" href="manifest.json" />
+    
+    <!-- Preload critical resources -->
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" />
+    <link rel="preconnect" href="https://tile.openstreetmap.org" />
+  </head>
+  <body class="antialiased">
+    <div id="root"></div>
+  <script type="module" src="/src/main.tsx"></script>
+  <!-- Service worker intentionally not auto-registered in packaged app to avoid stale caches. -->
+  </body>
+</html>

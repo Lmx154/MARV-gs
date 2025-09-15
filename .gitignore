@@ -15,3 +15,5 @@ dist/
 # OS
 .DS_Store
 Thumbs.db
+
+src/frontend/MARV-gui/node_modules

@@ -24,7 +24,7 @@ class ServerWindow(QMainWindow):
     def __init__(self) -> None:
         super().__init__()
         self.setWindowTitle("MARV-gs Server UI")
-        self.resize(900, 600)
+        self.resize(1000, 600)
 
         central = QWidget(self)
         self.setCentralWidget(central)
@@ -36,6 +36,7 @@ class ServerWindow(QMainWindow):
         self.start_btn = QPushButton("Start Server")
         self.stop_btn = QPushButton("Stop Server")
         self.open_ui_btn = QPushButton("Open Test UI")
+        self.open_gui_btn = QPushButton("Open GUI")
         self.log_view = QTextEdit()
         self.log_view.setReadOnly(True)
         self.log_view.setLineWrapMode(QTextEdit.LineWrapMode.NoWrap)
@@ -47,17 +48,21 @@ class ServerWindow(QMainWindow):
         layout.addWidget(self.start_btn, 0, 4)
         layout.addWidget(self.stop_btn, 0, 5)
         layout.addWidget(self.open_ui_btn, 0, 6)
-        layout.addWidget(self.log_view, 1, 0, 1, 7)
+        layout.addWidget(self.open_gui_btn, 0, 7)
+        layout.addWidget(self.log_view, 1, 0, 1, 8)
 
+        # Child process for dev server mode
         self.proc = QProcess(self)
         self.proc.setProcessChannelMode(QProcess.ProcessChannelMode.MergedChannels)
         self.proc.readyReadStandardOutput.connect(self._on_proc_output)
         self.proc.errorOccurred.connect(self._on_proc_error)
         self.proc.finished.connect(self._on_proc_finished)
 
+        # Wire actions
         self.start_btn.clicked.connect(self.start_server)
         self.stop_btn.clicked.connect(self.stop_server)
         self.open_ui_btn.clicked.connect(self.open_test_ui)
+        self.open_gui_btn.clicked.connect(self.open_gui)
 
         self._update_buttons()
 
@@ -125,10 +130,12 @@ class ServerWindow(QMainWindow):
             }
 
             if getattr(sys, 'frozen', False):
-                # Frozen build: run uvicorn in a thread (no reload)
+                # Frozen build: run uvicorn with direct app instance in a thread (no reload)
+                from src.backend.app import create_app  # import bundled module
+                asgi_app = create_app()
                 self._append_log(f"Starting embedded server on {host}:{port}\n")
                 config = uvicorn.Config(
-                    "src.backend.app:app",
+                    asgi_app,
                     host=host,
                     port=int(port),
                     reload=False,
@@ -175,6 +182,24 @@ class ServerWindow(QMainWindow):
         host = self.host_edit.text().strip() or "127.0.0.1"
         port = self.port_edit.text().strip() or "8000"
         url = f"http://{host}:{port}/test-ui/"
+        webbrowser.open(url)
+
+    def _frontend_dir(self) -> Path:
+        base = getattr(sys, "_MEIPASS", None)
+        if base:
+            return Path(base) / "src" / "frontend"
+        return Path(__file__).resolve().parents[2] / "src" / "frontend"
+
+    def open_gui(self) -> None:
+        import webbrowser
+        host = self.host_edit.text().strip() or "127.0.0.1"
+        port = self.port_edit.text().strip() or "8000"
+        # If built static GUI exists, open it; otherwise fall back to Vite dev server
+        gui_index = self._frontend_dir() / "gui" / "index.html"
+        if gui_index.exists():
+            url = f"http://{host}:{port}/gui/"
+        else:
+            url = "http://localhost:5173/"
         webbrowser.open(url)
 
 
