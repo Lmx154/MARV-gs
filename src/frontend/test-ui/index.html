@@ -1,101 +1,24 @@
 <!doctype html>
 <html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>MARV-gs Test UI</title>
-  <style>
-    :root { color-scheme: light dark; }
-    body { font-family: system-ui, Arial, sans-serif; margin: 1rem; }
-    .row { display: flex; gap: .5rem; flex-wrap: wrap; margin-bottom: .5rem; }
-    input, button { padding: .5rem; }
-    #status { margin: .5rem 0; }
-    #data { white-space: pre-wrap; border: 1px solid #8884; padding: .5rem; height: 260px; overflow: auto; }
-    .muted { opacity: .7; font-size: .9em; }
-  </style>
-  <script>
-    const apiBase = location.origin; // assumes same origin
-    let ws;
-
-    async function openPort() {
-      const port = document.getElementById('port').value.trim();
-      const baud = Number(document.getElementById('baud').value.trim());
-      const res = await fetch(`${apiBase}/open`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ port, baud }) });
-      const body = await res.json();
-      log('OPEN -> ' + JSON.stringify(body));
-    }
-
-    async function closePort() {
-      const res = await fetch(`${apiBase}/close`, { method: 'POST' });
-      const body = await res.json();
-      log('CLOSE -> ' + JSON.stringify(body));
-    }
-
-    async function writeCmd() {
-      const cmd = document.getElementById('cmd').value;
-      const res = await fetch(`${apiBase}/write`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ cmd }) });
-      const body = await res.json();
-      log('WRITE -> ' + JSON.stringify(body));
-    }
-
-    function connectWS() {
-      const url = (location.protocol === 'https:' ? 'wss://' : 'ws://') + location.host + '/ws';
-      ws = new WebSocket(url);
-      ws.onopen = () => setStatus('connected');
-      ws.onclose = () => setStatus('disconnected');
-      ws.onmessage = (ev) => {
-        try { const msg = JSON.parse(ev.data);
-          if (msg.type === 'status') {
-            setStatus(msg.state);
-          } else if (msg.type === 'data') {
-            appendData(msg.line);
-          }
-        } catch (e) {
-          appendData(ev.data);
-        }
-      };
-    }
-
-    function setStatus(s) {
-      document.getElementById('status').textContent = 'Status: ' + s;
-    }
-    function log(m) {
-      const el = document.getElementById('log');
-      el.textContent += m + '\n';
-      el.scrollTop = el.scrollHeight;
-    }
-    function appendData(line) {
-      const el = document.getElementById('data');
-      el.textContent += line;
-      el.scrollTop = el.scrollHeight;
-    }
-
-    window.addEventListener('DOMContentLoaded', () => {
-      connectWS();
-      document.getElementById('openBtn').addEventListener('click', openPort);
-      document.getElementById('closeBtn').addEventListener('click', closePort);
-      document.getElementById('writeBtn').addEventListener('click', writeCmd);
-    });
-  </script>
-  <noscript>Enable JavaScript for live streaming.</noscript>
-</head>
-<body>
-  <h1>MARV-gs Test UI</h1>
-  <div class="row">
-    <input id="port" placeholder="COM3 or /dev/ttyUSB0" value="COM3" />
-    <input id="baud" type="number" placeholder="115200" value="115200" />
-    <button id="openBtn">Open</button>
-    <button id="closeBtn">Close</button>
-  </div>
-  <div class="row">
-    <input id="cmd" placeholder="Command (newline auto-appended)" />
-    <button id="writeBtn">Write</button>
-  </div>
-  <div id="status" class="muted">Status: unknown</div>
-  <h3>Live Data</h3>
-  <div id="data"></div>
-  <h3>Log</h3>
-  <pre id="log" class="muted"></pre>
-  <p class="muted">This is a minimal testing UI. Use your production frontend separately.</p>
-</body>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta http-equiv="refresh" content="0; url=/test-ui/dist/" />
+    <title>MARV-gs Test UI</title>
+    <style>
+      :root { color-scheme: light dark; }
+      body { font-family: system-ui, Arial, sans-serif; margin: 2rem; }
+      a { color: dodgerblue; }
+    </style>
+    <script>
+      // When served from src/frontend as static, redirect this legacy file to the new app entry
+      if (location.pathname.endsWith('/test-ui/') || location.pathname.endsWith('/test-ui/index.html')) {
+        location.replace('/test-ui/dist/');
+      }
+    </script>
+  </head>
+  <body>
+    <h1>MARV-gs Test UI</h1>
+    <p>Redirecting to the new React app… If you are not redirected, <a href="/test-ui/dist/">click here</a>.</p>
+  </body>
 </html>
